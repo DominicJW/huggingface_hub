@@ -117,7 +117,7 @@ Training data was a csv file consisting of three columns: Claim, Evidence, label
 
 #### Preprocessing [optional]
 
-{{ preprocessing | default("[More Information Needed]", true)}}
+
 Raw sentence pairs must be proccessed by using the associated CustomDataset, and using the custom collate function in the dataloader to create padding chunks across each batch.
 
 In training, upsampling was used to correct the class imbalance.
@@ -126,13 +126,27 @@ In training, upsampling was used to correct the class imbalance.
 
 - **Training regime:** {{ training_regime | default("[More Information Needed]", true)}} <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
 
+bert_model = "bert-base-uncased"
+freeze_bert = False
+iters_to_accumulate = 1
+lr = 2e-5  
+epochs = 4  
+gradient_clip_val = 5.0
+bs = 32 
+num_training_steps = len(train_loader) * epochs
+optimizer = AdamW, default params except lr
+lr_scheduler = get_linear_schedule_with_warmup(optimizer=optimizer,
+  num_warmup_steps=500,
+  num_training_steps=num_training_steps)
+Early stop at end of epoch 2!.
+
 #### Speeds, Sizes, Times [optional]
 
 <!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
 
 {{ speeds_sizes_times | default("[More Information Needed]", true)}}
 max length 64: 
-max length 128: 
+max length 128: 1min30s
 max length 256: 
 max length 512: 
 
