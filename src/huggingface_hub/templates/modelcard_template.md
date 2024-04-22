@@ -4,11 +4,10 @@
 {{ card_data }}
 ---
 
-# Model Card for {{ model_id | default("Model ID", true) }}
+# Model Card for AnyLengthAlbert
 
-<!-- Provide a quick summary of what the model is/does. -->
-
-{{ model_summary | default("", true) }}
+AnyLengthAlbert is designed for sentence pair classification tasks. It is built upon the base of Albert-base-v2. The model expects inputs: input_ids: (Batch Size x Max Number of Chunks x Max Length of Chunk), attention_mask: (Batch Size x Max Number of Chunks x Max Length of Chunk), number_of_chunks: (Batch Size)
+The model does a forward pass feeding each chunk to albert, and then pools the CLS outputs, (sum(MaxPool, AvgPool)) and passes that to a single dense layer, generating a single output. The output should then be passed to through a sigmoid function  to generate probabilities.
 
 ## Model Details
 
@@ -18,13 +17,12 @@
 
 {{ model_description | default("", true) }}
 
-- **Developed by:** {{ developers | default("[More Information Needed]", true)}}
-- **Funded by [optional]:** {{ funded_by | default("[More Information Needed]", true)}}
-- **Shared by [optional]:** {{ shared_by | default("[More Information Needed]", true)}}
-- **Model type:** {{ model_type | default("[More Information Needed]", true)}}
-- **Language(s) (NLP):** {{ language | default("[More Information Needed]", true)}}
-- **License:** {{ license | default("[More Information Needed]", true)}}
-- **Finetuned from model [optional]:** {{ base_model | default("[More Information Needed]", true)}}
+- **Developed by:** Dominic Johnston-Whiteley
+- **Funded by [optional]:** Dominic Johnston-Whiteley
+- **Model type:** Transformer
+- **Language(s) (NLP):** English
+- **License:** Apache 2.0
+- **Finetuned from model [optional]:** albert-base-v2
 
 ### Model Sources [optional]
 
@@ -42,8 +40,7 @@
 
 <!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
 
-{{ direct_use | default("[More Information Needed]", true)}}
-
+Detecting if one sentence is evidence for a claim made by anotehr
 ### Downstream Use [optional]
 
 <!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
@@ -53,20 +50,50 @@
 ### Out-of-Scope Use
 
 <!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-{{ out_of_scope_use | default("[More Information Needed]", true)}}
+Fact Checking.
+The model has not been trained to fact check. But rather trained on a simplified textual entailment task between two sentences: Claim and Evidence. To tell whether the claim is backed up by the evidence, not if either are true/false
 
 ## Bias, Risks, and Limitations
 
 <!-- This section is meant to convey both technical and sociotechnical limitations. -->
 
-{{ bias_risks_limitations | default("[More Information Needed]", true)}}
+I achieved higgher performing results with vanilla finetuning of Albert. Training data has not been vetted by me personally, and I have seen not seeked any information about how the data was collected, or cleaned. 
+A key limitation is the need for complex pre-proccessing of the text.
+A limitation I found in the training data is that most of the 'claims' could be seen as expressing an opinion. So a more accurate description of the models capabilities is that it has been trained to detect whether the 'evidence' justifies the opinion. 
+
+For example: (not taken from dataset)
+We should Elect Trump : When Trump was in office, he came out of many climate treaties, this boosted the american economy but at the cost of the environment : True | False
+with a pair of sentences like this, 
+the label True or False is entirely down to the opinions of the labeller, whether they see the climate or economy as more important.
+This example, though not taken from the dataset highlights a key potential issue with claims which have conflicting evidence.
+
+(taken from the dev dataset)
+Claim: Evidence: Label
+We should legalize same sex marriage :	A June 2006 TNS-Sofres poll found that 45% of respondents supported same-sex marriage, with 51% opposed. :	1
+
+The evidence that a poll found slightly more people opposed same sex marriage than supported it or were neuteral makes me question the critereon the labeller used to distinguish whether something the evidence supports is neutral or is against the claim. 
+
+
+We should increase internet censorship :	According to the report, few countries demonstrated any gains in Internet freedom, and the improvements that were recorded reflected less vigorous application of existing controls rather than new steps taken by governments to actively increase Internet freedom.:	1
+
+In this example the evidence shows governments are doing X, the label implies that if governments are doing X then we should do X. Clearly the labels have not been well thought through.
+
+I did not have to delve deep into the dataset to find these examples. It took me around 30 seconds to find each one just by skimming. This shows that the dataset is likely riddled with similar issues. Due to the severe and clear issues, I assume this was some kind of test by our lecturer, to see if we would consider the ethical issues underlying the dataset. This is very important and relevant today, with the advent of automated fact checkers censoring social media during the pandemic. And indeed this dataset highlights how such systems can get things wrong. 
+Fact checking gone wrong https://www.bmj.com/content/376/bmj.o95#ref-8 
+
+Note: Evidence detection is not the same task as fact checking, but can be used in the fact checking pipeline
+For example: https://aclanthology.org/2021.findings-acl.217"
+
+
+
 
 ### Recommendations
 
 <!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
+The model does not have good enough performance to use in any kind of production setting. It is merely for a coursework, and an attempt to use sequences longer than 512 with a bert based transformer, as opposed to nievly truncating the input sentence.
 
-{{ bias_recommendations | default("Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.", true)}}
+As discussed above, there are many disputable labels on the training data. 
+Do not use!
 
 ## How to Get Started with the Model
 
@@ -80,7 +107,8 @@ Use the code below to get started with the model.
 
 <!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
 
-{{ training_data | default("[More Information Needed]", true)}}
+Supplied by The University of Manchester, for this coursework. 
+Training data was a csv file consisting of three columns: Claim, Evidence, label. And around 23 thousand samples, with a class imbalance of 25% false, 75% true. 
 
 ### Training Procedure
 
@@ -89,7 +117,9 @@ Use the code below to get started with the model.
 #### Preprocessing [optional]
 
 {{ preprocessing | default("[More Information Needed]", true)}}
+Raw sentence pairs must be proccessed by using the associated CustomDataset, and using the custom collate function in the dataloader to create padding chunks across each batch.
 
+In training, upsampling was used to correct the class imbalance.
 
 #### Training Hyperparameters
 
@@ -100,6 +130,10 @@ Use the code below to get started with the model.
 <!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
 
 {{ speeds_sizes_times | default("[More Information Needed]", true)}}
+max length 64: 
+max length 128: 
+max length 256: 
+max length 512: 
 
 ## Evaluation
 
@@ -111,19 +145,22 @@ Use the code below to get started with the model.
 
 <!-- This should link to a Dataset Card if possible. -->
 
-{{ testing_data | default("[More Information Needed]", true)}}
+Supplied by University of Manchester
 
 #### Factors
 
 <!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
 
-{{ testing_factors | default("[More Information Needed]", true)}}
+No disaggreagation used in testing.
 
 #### Metrics
 
 <!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-{{ testing_metrics | default("[More Information Needed]", true)}}
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
+print(f"F1 Score: {f1}")
+print(f"MCC: {mcc}")
+print(f"Accuracy: {accuracy}")
 
 ### Results
 
@@ -133,68 +170,21 @@ Use the code below to get started with the model.
 
 {{ results_summary | default("", true) }}
 
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-{{ model_examination | default("[More Information Needed]", true)}}
-
 ## Environmental Impact
 
 <!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
 
 Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
 
-- **Hardware Type:** {{ hardware_type | default("[More Information Needed]", true)}}
-- **Hours used:** {{ hours_used | default("[More Information Needed]", true)}}
-- **Cloud Provider:** {{ cloud_provider | default("[More Information Needed]", true)}}
-- **Compute Region:** {{ cloud_region | default("[More Information Needed]", true)}}
-- **Carbon Emitted:** {{ co2_emitted | default("[More Information Needed]", true)}}
+- **Hardware Type:** L4 GPU
+- **Hours used:** To train once: 10 mins (at max length 128), To develop: dozens of trials at 10-20 mins each
+- **Cloud Provider:** Google Colab
+- **Compute Region:** Europe (likely)
+- **Carbon Emitted:** 0.63 kg CO2 eq.  (All offset by google, calculated using above link, said V100 as most comparable to L4, and L4 not available in drop down)
 
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-{{ model_specs | default("[More Information Needed]", true)}}
-
-### Compute Infrastructure
-
-{{ compute_infrastructure | default("[More Information Needed]", true)}}
-
-#### Hardware
-
-{{ hardware_requirements | default("[More Information Needed]", true)}}
-
-#### Software
-
-{{ software | default("[More Information Needed]", true)}}
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-{{ citation_bibtex | default("[More Information Needed]", true)}}
-
-**APA:**
-
-{{ citation_apa | default("[More Information Needed]", true)}}
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-{{ glossary | default("[More Information Needed]", true)}}
-
-## More Information [optional]
-
-{{ more_information | default("[More Information Needed]", true)}}
 
 ## Model Card Authors [optional]
-
-{{ model_card_authors | default("[More Information Needed]", true)}}
+Dominic Johnston-Whiteley
 
 ## Model Card Contact
-
-{{ model_card_contact | default("[More Information Needed]", true)}}
+dominic.johnstonwhiteley@student.manchester.ac.uk
