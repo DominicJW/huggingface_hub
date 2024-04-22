@@ -45,13 +45,13 @@ Detecting if one sentence is evidence for a claim made by anotehr
 
 <!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
 
-{{ downstream_use | default("[More Information Needed]", true)}}
+Fact checking (See below)
 
 ### Out-of-Scope Use
 
 <!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-Fact Checking.
-The model has not been trained to fact check. But rather trained on a simplified textual entailment task between two sentences: Claim and Evidence. To tell whether the claim is backed up by the evidence, not if either are true/false
+Not to be used for any real life application. 
+The scope it can be used in is within this coursework. Though the archetecture could inspire other attempts to handle longer input sequences than a single transformer encoder model is able to. 
 
 ## Bias, Risks, and Limitations
 
