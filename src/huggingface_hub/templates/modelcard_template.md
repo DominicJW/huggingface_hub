@@ -109,7 +109,7 @@ Use the code below to get started with the model.
 <!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
 
 Supplied by The University of Manchester, for this coursework. 
-Training data was a csv file consisting of three columns: Claim, Evidence, label. And around 23 thousand samples, with a class imbalance of 25% false, 75% true. 
+Training data was a csv file consisting of three columns: Claim, Evidence, label. And around 23 thousand samples, with a class imbalance of 75% false, 25% true. 
 
 ### Training Procedure
 
