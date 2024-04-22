@@ -78,11 +78,12 @@ We should increase internet censorship :	According to the report, few countries 
 
 In this example the evidence shows governments are doing X, the label implies that if governments are doing X then we should do X. Clearly the labels have not been well thought through.
 
-I did not have to delve deep into the dataset to find these examples. It took me around 30 seconds to find each one just by skimming. This shows that the dataset is likely riddled with similar issues. Due to the severe and clear issues, I assume this was some kind of test by our lecturer, to see if we would consider the ethical issues underlying the dataset. This is very important and relevant today, with the advent of automated fact checkers censoring social media during the pandemic. And indeed this dataset highlights how such systems can get things wrong. 
-Fact checking gone wrong https://www.bmj.com/content/376/bmj.o95#ref-8 
+I did not have to delve deep into the dataset to find these examples. It took me around 30 seconds to find each one just by skimming. This shows that the dataset is likely riddled with similar issues. Due to the severe and clear issues, I assume this was some kind of test by our lecturer, to see if we would consider the ethical issues underlying the dataset. This is very important and relevant today, with the advent of automated fact checkers censoring social media during the pandemic. And indeed this dataset highlights one of the ways such systems can get things wrong.
 
-Note: Evidence detection is not the same task as fact checking, but can be used in the fact checking pipeline
-For example: https://aclanthology.org/2021.findings-acl.217"
+Fact checking gone wrong: https://www.bmj.com/content/376/bmj.o95#ref-8 
+
+Note: Evidence detection is not the same task as fact checking, but the closely related task, natural language inference/ textual entailment can be used in the fact checking pipeline
+For example: https://aclanthology.org/2021.findings-acl.217
 
 
 
