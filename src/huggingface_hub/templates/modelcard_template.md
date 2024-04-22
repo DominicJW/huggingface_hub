@@ -22,15 +22,14 @@ The model does a forward pass feeding each chunk to albert, and then pools the C
 - **Model type:** Transformer
 - **Language(s) (NLP):** English
 - **License:** Apache 2.0
-- **Finetuned from model [optional]:** albert-base-v2
+- **Finetuned from model [optional]:** bert-base-uncased
 
 ### Model Sources [optional]
 
 <!-- Provide the basic links for the model. -->
 
-- **Repository:** {{ repo | default("[More Information Needed]", true)}}
-- **Paper [optional]:** {{ paper | default("[More Information Needed]", true)}}
-- **Demo [optional]:** {{ demo | default("[More Information Needed]", true)}}
+- **Repository:** https://github.com/DominicJW/AnyLengthBert
+- **Demo [optional]:** https://colab.research.google.com/drive/1xRCR1EA1C8iWvkZ1dFdj0t6f7qgH7HWU?usp=sharing 
 
 ## Uses
 
